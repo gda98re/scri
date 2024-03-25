@@ -51,7 +51,7 @@ class AsymptoticBondiData:
 
         """
         import functools
-
+        
         if np.ndim(time) == 0:
             # Assume this is just the size of the time array; construct an empty array
             time = np.empty((time,), dtype=float)
@@ -71,6 +71,7 @@ class AsymptoticBondiData:
         self._psi3 = ModesTS(self._raw_data[3], self._time, spin_weight=-1)
         self._psi4 = ModesTS(self._raw_data[4], self._time, spin_weight=-2)
         self._sigma = ModesTS(self._raw_data[5], self._time, spin_weight=2)
+        self.interpolant = None
 
     @property
     def time(self):
@@ -161,7 +162,7 @@ class AsymptoticBondiData:
 
     def copy(self):
         import copy
-
+        print('copy')
         new_abd = type(self)(self.t, self.ell_max)
         state = copy.deepcopy(self.__dict__)
         new_abd.__dict__.update(state)
