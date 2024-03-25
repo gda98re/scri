@@ -686,6 +686,7 @@ def map_to_superrest_frame(
     fix_time_phase_freedom=False,
     modes=None,
     print_conv=False,
+    get_mapped_abd=True
 ):
     """Transform an abd object to the superrest frame.
 
@@ -897,11 +898,13 @@ def map_to_superrest_frame(
         ["supertranslation", "frame_rotation", "boost_velocity"]
     )
 
-    # transform abd
-    abd_prime = abd.transform(
-        supertranslation=best_BMS_transformation.supertranslation,
-        frame_rotation=best_BMS_transformation.frame_rotation.components,
-        boost_velocity=best_BMS_transformation.boost_velocity,
-    )
-
-    return abd_prime, best_BMS_transformation, best_rel_err
+    # transform abd, optional
+    if get_mapped_abd == True:
+        abd_prime = abd.transform(
+            supertranslation=best_BMS_transformation.supertranslation,
+            frame_rotation=best_BMS_transformation.frame_rotation.components,
+            boost_velocity=best_BMS_transformation.boost_velocity,
+        )
+        return abd_prime, best_BMS_transformation, best_rel_err
+    else:
+        return best_BMS_transformation, best_rel_err
