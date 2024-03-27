@@ -162,7 +162,7 @@ class AsymptoticBondiData:
 
     def copy(self):
         import copy
-        print('copy')
+
         new_abd = type(self)(self.t, self.ell_max)
         state = copy.deepcopy(self.__dict__)
         new_abd.__dict__.update(state)
