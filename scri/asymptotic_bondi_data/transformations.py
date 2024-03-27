@@ -338,7 +338,5 @@ def transform(self, **kwargs):
     abdprime.psi4 = spinsfast.map2salm(fprime_of_timeprime_directionprime[4], -2, output_ell_max)
     # σ'(u')_{ℓ', m'}
     abdprime.sigma = spinsfast.map2salm(fprime_of_timeprime_directionprime[5], 2, output_ell_max)
-    
-    print(abdprime.psi0)
 
     return abdprime
