@@ -197,6 +197,88 @@ def conformal_factors(boost_velocity, distorted_grid_rotors):
 
 
 def transform(self, **kwargs):
+    """Apply BMS transformation to AsymptoticBondiData object
+
+    It is important to note that the input transformation parameters are applied in this order:
+
+      1. (Super)Translations
+      2. Rotation (about the origin)
+      3. Boost (about the origin)
+
+    All input parameters refer to the transformation required to take the input data's inertial
+    frame onto the inertial frame of the output data's inertial observers.  In what follows, the
+    coordinates of and functions in the input inertial frame will be unprimed, while corresponding
+    values of the output inertial frame will be primed.
+
+    The translations (space, time, spacetime, or super) can be given in various ways, which may
+    override each other.  Ultimately, however, they are essentially combined into a single function
+    `α`, representing the supertranslation, which transforms the asymptotic time variable `u` as
+
+        u'(u, θ, ϕ) = u(u, θ, ϕ) - α(θ, ϕ)
+
+    A simple time translation by δt would correspond to
+
+        α(θ, ϕ) = δt  # Independent of (θ, ϕ)
+
+    A pure spatial translation δx would correspond to
+
+        α(θ, ϕ) = -δx · n̂(θ, ϕ)
+
+    where `·` is the usual dot product, and `n̂` is the unit vector in the given direction.
+
+
+    Parameters
+    ==========
+    abd: AsymptoticBondiData
+        The object storing the modes of the original data, which will be transformed in this
+        function.  This is the only required argument to this function.
+    time_translation: float, optional
+        Defaults to zero.  Nonzero overrides corresponding components of `spacetime_translation` and
+        `supertranslation` parameters.  Note that this is the actual change in the coordinate value,
+        rather than the corresponding mode weight (which is what `supertranslation` represents).
+    space_translation : float array of length 3, optional
+        Defaults to empty (no translation).  Non-empty overrides corresponding components of
+        `spacetime_translation` and `supertranslation` parameters.  Note that this is the actual
+        change in the coordinate value, rather than the corresponding mode weight (which is what
+        `supertranslation` represents).
+    spacetime_translation : float array of length 4, optional
+        Defaults to empty (no translation).  Non-empty overrides corresponding components of
+        `supertranslation`.  Note that this is the actual change in the coordinate value, rather
+        than the corresponding mode weight (which is what `supertranslation` represents).
+    supertranslation : complex array [defaults to 0]
+        This gives the complex components of the spherical-harmonic expansion of the
+        supertranslation in standard form, starting from ell=0 up to some ell_max, which may be
+        different from the ell_max of the input `abd` object.  Supertranslations must be real, so
+        these values should obey the condition
+            α^{ℓ,m} = (-1)^m ᾱ^{ℓ,-m}
+        This condition is actually imposed on the input data, so imaginary parts of α(θ, ϕ) will
+        essentially be discarded.  Defaults to empty, which causes no supertranslation.  Note that
+        some components may be overridden by the parameters above.
+    frame_rotation : quaternion [defaults to 1]
+        Transformation applied to (x,y,z) basis of the input mode's inertial frame.  For example,
+        the basis z vector of the new frame may be written as
+           z' = frame_rotation * z * frame_rotation.inverse()
+        Defaults to 1, corresponding to the identity transformation (no rotation).
+    boost_velocity : float array of length 3 [defaults to (0, 0, 0)]
+        This is the three-velocity vector of the new frame relative to the input frame.  The norm of
+        this vector is required to be smaller than 1.
+    output_ell_max: int [defaults to abd.ell_max]
+        Maximum ell value in the output data.
+    working_ell_max: int [defaults to 2 * abd.ell_max]
+        Maximum ell value to use during the intermediate calculations.  Rotations and time
+        translations do not require this to be any larger than abd.ell_max, but other
+        transformations will require more values of ell for accurate results.  In particular, boosts
+        are multiplied by time, meaning that a large boost of data with large values of time will
+        lead to very large power in higher modes.  Similarly, large (super)translations will couple
+        power through a lot of modes.  To avoid aliasing, this value should be large, to accomodate
+        power in higher modes.
+
+    Returns
+    -------
+    abdprime: AsymptoticBondiData
+        Object representing the transformed data.
+
+    """
     from quaternion import rotate_vectors
     from scipy.interpolate import CubicSpline
 
