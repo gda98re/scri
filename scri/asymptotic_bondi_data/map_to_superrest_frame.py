@@ -784,8 +784,8 @@ def map_to_superrest_frame(
     if alpha_ell_max is None:
         alpha_ell_max = ell_max
 
-    if t_0 - (padding_time + 200) < np.min(abd.u) or t_0 + (padding_time + 200) > np.max(abd.u):
-        raise ValueError('Mapping time window out of bound')
+    if t_0 < np.min(abd.u) or t_0 > np.max(abd.u):
+        raise ValueError('Mapping time out of bound')
         
     abd_interp = abd.interpolate(
         abd.t[np.argmin(abs(abd.t - (t_0 - (padding_time + 200)))) : np.argmin(abs(abd.t - (t_0 + (padding_time + 200)))) + 1]
