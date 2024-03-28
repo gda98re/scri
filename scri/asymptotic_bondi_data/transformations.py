@@ -334,8 +334,6 @@ def transform(self, **kwargs):
     latest_complete_timeprime = np.min(timeprime_of_finaltime_directionprime.view(np.ndarray))
     timeprime = timeprime[(timeprime >= earliest_complete_timeprime) & (timeprime <= latest_complete_timeprime)]
     
-    print(timeprime)
-    
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
     f_of_timeprime = self.interpolant(timeprime)
                 
@@ -406,6 +404,8 @@ def transform(self, **kwargs):
     fprime_temp *= one_over_k
     fprime_of_timeprime_directionprime[5] = fprime_temp
 
+    print(fprime_of_timeprime_directionprime)
+    
     # Finally, transform back from the distorted grid to the SWSH mode weights as measured in that
     # grid.  I'll abuse notation slightly here by indicating those "distorted" mode weights with
     # primes, so that f'(u')_{ℓ', m'} =  f'(u', θ', ϕ') sȲ_{ℓ', m'}(θ', ϕ') sin(θ') dθ' dϕ'
