@@ -334,6 +334,8 @@ def transform(self, **kwargs):
     latest_complete_timeprime = np.min(timeprime_of_finaltime_directionprime.view(np.ndarray))
     timeprime = timeprime[(timeprime >= earliest_complete_timeprime) & (timeprime <= latest_complete_timeprime)]
     
+    print(timeprime)
+    
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
     f_of_timeprime = self.interpolant(timeprime)
                 
