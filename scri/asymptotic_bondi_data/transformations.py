@@ -336,6 +336,8 @@ def transform(self, **kwargs):
     
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
     f_of_timeprime = self.interpolant(timeprime)
+    print('timeprime', timeprime)
+    print('f_of_timeprime:', f_of_timeprime)
                 
     # ðu'(u', θ', ϕ') exp(iλ) / k(θ', ϕ')
     ðuprime_over_k = -sf.Grid(CubicSpline(u, -one_over_k * ðk_over_k * u + ðα)(timeprime), spin_weight=1)
@@ -352,8 +354,6 @@ def transform(self, **kwargs):
     ψ4 = sf.Grid(sf.Modes(spinsfast.map2salm(f_of_timeprime[4], -2, working_ell_max), spin_weight=-2).evaluate(distorted_grid_rotors), spin_weight=-2)
     # σ(u', θ', ϕ') exp(2iλ)
     σ = sf.Grid(sf.Modes(spinsfast.map2salm(f_of_timeprime[5], 2, working_ell_max), spin_weight=2).evaluate(distorted_grid_rotors), spin_weight=2)
-    
-    print(ψ0)
     
     ### The following calculations are done using in-place Horner form.  I suspect this will be the
     ### most efficient form of this calculation, within reason.  Note that the factors of exp(isλ)
