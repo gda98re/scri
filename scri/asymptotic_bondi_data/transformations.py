@@ -353,6 +353,8 @@ def transform(self, **kwargs):
     # σ(u', θ', ϕ') exp(2iλ)
     σ = sf.Grid(sf.Modes(spinsfast.map2salm(f_of_timeprime[5], 2, working_ell_max), spin_weight=2).evaluate(distorted_grid_rotors), spin_weight=2)
     
+    print(ψ0)
+    
     ### The following calculations are done using in-place Horner form.  I suspect this will be the
     ### most efficient form of this calculation, within reason.  Note that the factors of exp(isλ)
     ### were computed automatically by evaluating in terms of quaternions.
@@ -403,8 +405,6 @@ def transform(self, **kwargs):
     fprime_temp -= ððα
     fprime_temp *= one_over_k
     fprime_of_timeprime_directionprime[5] = fprime_temp
-
-    print(fprime_of_timeprime_directionprime)
     
     # Finally, transform back from the distorted grid to the SWSH mode weights as measured in that
     # grid.  I'll abuse notation slightly here by indicating those "distorted" mode weights with
