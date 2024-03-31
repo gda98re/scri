@@ -337,7 +337,7 @@ def transform(self, **kwargs):
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
     print('self.u', self.u[0], self.u[-1])
     print('timeprime', timeprime[0], timeprime[-1])
-    f_of_timeprime = (self.interpolant)(timeprime) #Bug! for big time translations we are asking interpolation way outside the b.c. domain
+    f_of_timeprime = self.interpolant(timeprime) #Bug! for big time translations we are asking interpolation way outside the b.c. domain
                 
     # ðu'(u', θ', ϕ') exp(iλ) / k(θ', ϕ')
     ðuprime_over_k = -sf.Grid(CubicSpline(u, -one_over_k * ðk_over_k * u + ðα)(timeprime), spin_weight=1)
