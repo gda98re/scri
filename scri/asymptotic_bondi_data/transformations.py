@@ -345,7 +345,7 @@ def transform(self, **kwargs):
     print('self.u', self.u[0], self.u[-1])
     print('timeprime', timeprime[0], timeprime[-1])
     f_of_timeprime = (self.interpolant)(timeprime) #this is the problematic line timeprime is correct, the interpolant is problematic
-    print('f_of_timeprime:', f_of_timeprime)
+    print('f_of_timeprime:',self.psi0.evaluate(grid_rotors))
                 
     # ðu'(u', θ', ϕ') exp(iλ) / k(θ', ϕ')
     ðuprime_over_k = -sf.Grid(CubicSpline(u, -one_over_k * ðk_over_k * u + ðα)(timeprime), spin_weight=1)
