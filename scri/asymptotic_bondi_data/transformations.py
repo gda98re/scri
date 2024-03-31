@@ -333,19 +333,11 @@ def transform(self, **kwargs):
     earliest_complete_timeprime = np.max(timeprime_of_initialtime_directionprime.view(np.ndarray))
     latest_complete_timeprime = np.min(timeprime_of_finaltime_directionprime.view(np.ndarray))
     timeprime = timeprime[(timeprime >= earliest_complete_timeprime) & (timeprime <= latest_complete_timeprime)]
-    
-    #print('interpolant data psi0: ', sf.Grid(self.psi0.evaluate(grid_rotors), spin_weight=2))
-    #print('interpolant data psi1: ', sf.Grid(self.psi1.evaluate(grid_rotors), spin_weight=1))
-    #print('interpolant data psi2: ', sf.Grid(self.psi2.evaluate(grid_rotors), spin_weight=0))
-    #print('interpolant data psi3: ', sf.Grid(self.psi3.evaluate(grid_rotors), spin_weight=-1))
-    #print('interpolant data psi4: ', sf.Grid(self.psi4.evaluate(grid_rotors), spin_weight=-2))
-    #print('interpolant data sigma', sf.Grid(self.sigma.evaluate(grid_rotors), spin_weight=2))
-    
+        
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
     print('self.u', self.u[0], self.u[-1])
     print('timeprime', timeprime[0], timeprime[-1])
-    f_of_timeprime = (self.interpolant)(timeprime) #this is the problematic line timeprime is correct, the interpolant is problematic
-    print('f_of_timeprime:',self.psi0.evaluate(grid_rotors))
+    f_of_timeprime = (self.interpolant)(timeprime) #Bug! for big time translations we are asking interpolation way outside the b.c. domain
                 
     # ðu'(u', θ', ϕ') exp(iλ) / k(θ', ϕ')
     ðuprime_over_k = -sf.Grid(CubicSpline(u, -one_over_k * ðk_over_k * u + ðα)(timeprime), spin_weight=1)
@@ -430,7 +422,5 @@ def transform(self, **kwargs):
     abdprime.psi4 = spinsfast.map2salm(fprime_of_timeprime_directionprime[4], -2, output_ell_max)
     # σ'(u')_{ℓ', m'}
     abdprime.sigma = spinsfast.map2salm(fprime_of_timeprime_directionprime[5], 2, output_ell_max)
-    
-    #print('psi0',abdprime.psi0 )
 
     return abdprime
