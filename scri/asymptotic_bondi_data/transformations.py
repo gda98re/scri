@@ -3,6 +3,7 @@ import numpy as np
 import quaternion
 import spinsfast
 import spherical_functions as sf
+import time
 
 
 def _process_transformation_kwargs(input_ell_max, **kwargs):
@@ -294,7 +295,6 @@ def transform(self, **kwargs):
     n_phi = n_theta
     β = np.linalg.norm(boost_velocity)
     γ = 1 / math.sqrt(1 - β**2)
-    print('mod')
     
     if self.interpolant == None:
         grid_rotors = boosted_grid(np.quaternion(1, 0, 0, 0), np.zeros(3), n_theta, n_phi)
@@ -327,11 +327,12 @@ def transform(self, **kwargs):
     ððα = sf.Grid(0.5 * supertranslation.eth.eth.evaluate(distorted_grid_rotors), spin_weight=α.s + 2)[np.newaxis, :, :]
     k, ðk_over_k, one_over_k, one_over_k_cubed = conformal_factors(boost_velocity, distorted_grid_rotors)
     
-    #sf.constant_from_ell_0_mode(supertranslation[0]) / γ
+    α_00 = sf.constant_from_ell_0_mode(supertranslation[0]).real
+    delta_u = α_00 / γ
     
-    timeprime = u.real / γ
-    timeprime_of_initialtime_directionprime = k * (u[0] - α + sf.constant_from_ell_0_mode(supertranslation[0]))
-    timeprime_of_finaltime_directionprime = k * (u[-1] - α + sf.constant_from_ell_0_mode(supertranslation[0]))
+    timeprime = u / γ
+    timeprime_of_initialtime_directionprime = k * (u[0] - α + α_00)
+    timeprime_of_finaltime_directionprime = k * (u[-1] - α + α_00)
     earliest_complete_timeprime = np.max(timeprime_of_initialtime_directionprime.view(np.ndarray))
     latest_complete_timeprime = np.min(timeprime_of_finaltime_directionprime.view(np.ndarray))
     timeprime = timeprime[(timeprime >= earliest_complete_timeprime) & (timeprime <= latest_complete_timeprime)]
@@ -423,6 +424,6 @@ def transform(self, **kwargs):
     # σ'(u')_{ℓ', m'}
     abdprime.sigma = spinsfast.map2salm(fprime_of_timeprime_directionprime[5], 2, output_ell_max)
     
-    abdprime.u = abdprime.u - sf.constant_from_ell_0_mode(supertranslation[0]) / γ
-
+    abdprime.u = abdprime.u - delta_u
+    
     return abdprime
