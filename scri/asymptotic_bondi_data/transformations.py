@@ -327,16 +327,16 @@ def transform(self, **kwargs):
     ððα = sf.Grid(0.5 * supertranslation.eth.eth.evaluate(distorted_grid_rotors), spin_weight=α.s + 2)[np.newaxis, :, :]
     k, ðk_over_k, one_over_k, one_over_k_cubed = conformal_factors(boost_velocity, distorted_grid_rotors)
     
-    timeprime = (u - sf.constant_from_ell_0_mode(supertranslation[0]).real) / γ
-    timeprime_of_initialtime_directionprime = k * (u[0] - α)
-    timeprime_of_finaltime_directionprime = k * (u[-1] - α)
+    #sf.constant_from_ell_0_mode(supertranslation[0]) / γ
+    
+    timeprime = u.real / γ
+    timeprime_of_initialtime_directionprime = k * (u[0] - α + sf.constant_from_ell_0_mode(supertranslation[0]))
+    timeprime_of_finaltime_directionprime = k * (u[-1] - α + sf.constant_from_ell_0_mode(supertranslation[0]))
     earliest_complete_timeprime = np.max(timeprime_of_initialtime_directionprime.view(np.ndarray))
     latest_complete_timeprime = np.min(timeprime_of_finaltime_directionprime.view(np.ndarray))
     timeprime = timeprime[(timeprime >= earliest_complete_timeprime) & (timeprime <= latest_complete_timeprime)]
         
     # This will store the values of f(u', θ, ϕ) for the various functions `f`
-    print('self.u', self.u[0], self.u[-1])
-    print('timeprime', timeprime[0], timeprime[-1])
     f_of_timeprime = self.interpolant(timeprime) #Bug! for big time translations we are asking interpolation way outside the b.c. domain
                 
     # ðu'(u', θ', ϕ') exp(iλ) / k(θ', ϕ')
@@ -422,5 +422,7 @@ def transform(self, **kwargs):
     abdprime.psi4 = spinsfast.map2salm(fprime_of_timeprime_directionprime[4], -2, output_ell_max)
     # σ'(u')_{ℓ', m'}
     abdprime.sigma = spinsfast.map2salm(fprime_of_timeprime_directionprime[5], 2, output_ell_max)
+    
+    abdprime.u = abdprime.u - sf.constant_from_ell_0_mode(supertranslation[0]) / γ
 
     return abdprime
